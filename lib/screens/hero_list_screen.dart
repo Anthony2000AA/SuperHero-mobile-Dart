@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:superhero_mobile_flutter/dao/hero_dao.dart';
 import 'package:superhero_mobile_flutter/models/hero.dart';
 import 'package:superhero_mobile_flutter/services/hero_service.dart';
 
@@ -98,13 +98,7 @@ class _HeroListState extends State<HeroList> {
           return ListView.builder(
             itemCount: _heroes.length,
             itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  title: Text(_heroes[index].name),
-                  subtitle: Text(_heroes[index].fullName),
-                  leading: Image.network(_heroes[index].path),
-                ),
-              );
+              return SuperHeroItem(hero: _heroes[index]);
             },
           );
         }
@@ -113,5 +107,49 @@ class _HeroListState extends State<HeroList> {
   }
 }
 
+class SuperHeroItem extends StatefulWidget {
+  const SuperHeroItem({super.key, required this.hero});
 
-jl
+  final SuperHero hero;
+
+  @override
+  State<SuperHeroItem> createState() => _SuperHeroItemState();
+}
+
+class _SuperHeroItemState extends State<SuperHeroItem> {
+
+
+
+  bool _isFavorite = false;
+
+final HeroDao _heroDao = HeroDao();
+initialize() async {
+  _isFavorite = await _heroDao.isFavorite(widget.hero);
+  setState(() {
+    _isFavorite = _isFavorite;
+  
+  });
+}
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+                child: ListTile(
+                  title: Text(widget.hero.name),
+                  subtitle: Text(widget.hero.fullName),
+                  leading: Image.network(widget.hero.path),
+                  trailing: IconButton(
+                    icon: Icon(_isFavorite ? Icons.favorite : Icons.favorite_border),
+                    color: _isFavorite ? Colors.red : Colors.grey,
+                    onPressed: () => {
+                      setState(() {
+                        _isFavorite = !_isFavorite;
+                      }),
+                     _isFavorite ? HeroDao().insert(widget.hero) : HeroDao().delete(widget.hero)
+                    },
+                   
+                   ),
+                ),
+              );
+  }
+}
