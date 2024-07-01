@@ -22,19 +22,26 @@ class HeroDao{
     );
   }
 
-  //Get all herodao
-  Future<List<SuperHero>> getAll() async {
+  //Delete hero by id
+  deleteById(String id) async {
     Database database = await AppDatabase().openDB();
-    final List<Map<String, dynamic>> maps = await database.query(AppDatabase().tableName);
 
-    return List.generate(maps.length, (i) {
-      return SuperHero(
-        id: maps[i]['id'],
-        name: maps[i]['name'],
-        fullName: maps[i]['fullName'],
-        path: '',
-      );
-    });
+    await database.delete(
+      AppDatabase().tableName,
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
+
+  //Get all herodao
+  Future<List> getAll() async {
+    Database database = await AppDatabase().openDB();
+    List maps = await database.query(AppDatabase().tableName);
+
+    return maps.map((e) => FavoriteHero.fromMap(e)).toList();
+
+    
   }
 
   //is favorite herodao

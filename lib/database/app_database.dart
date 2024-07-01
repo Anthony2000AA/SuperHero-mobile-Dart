@@ -1,11 +1,10 @@
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:sqflite/sqlite_api.dart';
 
 class AppDatabase {
   final int version = 1;
-  final String databaseName = "hero.db";
+  final String databaseName = "hero.database_1";
   final String tableName = "heroes";
 
   Database? _database;
@@ -14,7 +13,7 @@ class AppDatabase {
    _database ??= await openDatabase(
       join(await getDatabasesPath(), databaseName),
       onCreate: (db, version) {
-        String query  = "CREATE TABLE $tableName(id TEXT PRIMARY KEY, name TEXT, fullName TEXT)";
+        String query  = "CREATE TABLE $tableName(id TEXT PRIMARY KEY, name TEXT, fullName TEXT, path TEXT)";
         db.execute(query);
       },
       version: version
